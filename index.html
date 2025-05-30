@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Distance & Drive Time</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        .hospital-info {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .hospital-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .red-box {
+            background-color: #ffe0e0; /* Light red */
+            border-color: #ffaaaa; /* Red border */
+        }
+        .blue-box {
+            background-color: #e0f0ff; /* Light blue */
+            border-color: #aaaaff; /* Blue border */
+        }
+        #loading {
+            display: none;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+    <!-- Google Maps API script should be loaded before your custom script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvIrax2oRI_z3QlbzSxDENxVSIe64sgZo&libraries=places"></script>
+</head>
+<body>
+    <h1>Hospital Distance & Drive Time</h1>
+
+    <label for="origin">Enter Starting Address, Intersection, or Business:</label>
+    <input type="text" id="origin" placeholder="e.g., 123 Main St, Charlotte NC or Main St and Elm St, Clover SC or Starbucks Clover SC">
+    <button onclick="getDistances()">Get Distances & Drive Times</button>
+    <p id="loading">Loading...</p>
+
+    <div id="results">
+        <div class="hospital-info red-box">
+            <strong>Atrium Health Carolinas Medical Center</strong>
+            <p id="atrium-charlotte-distance"></p>
+            <p id="atrium-charlotte-duration"></p>
+        </div>
+        <div class="hospital-info red-box">
+            <strong>Piedmont Medical Center</strong>
+            <p id="piedmont-rockhill-distance"></p>
+            <p id="piedmont-rockhill-duration"></p>
+        </div>
+        <div class="hospital-info red-box">
+            <strong>Caromont Regional Medical Center</strong>
+            <p id="caromont-gastonia-distance"></p>
+            <p id="caromont-gastonia-duration"></p>
+        </div>
+        <div class="hospital-info blue-box">
+            <strong>Atrium Health Pineville</strong>
+            <p id="atrium-pineville-distance"></p>
+            <p id="atrium-pineville-duration"></p>
+        </div>
+        <div class="hospital-info">
+            <strong>Fort Mill Medical Center</strong>
+            <p id="fortmill-distance"></p>
+            <p id="fortmill-duration"></p>
+        </div>
+        <div class="hospital-info">
+            <strong>Atrium Health Kings Mountain</strong>
+            <p id="atrium-kingsmountain-distance"></p>
+            <p id="atrium-kingsmountain-duration"></p>
+        </div>
+        <div class="hospital-info">
+            <strong>MUSC Chester</strong>
+            <p id="musc-chester-distance"></p>
+            <p id="musc-chester-duration"></p>
+        </div>
+    </div>
+
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js');
+            });
+        }
+
+        const service = new google.maps.DistanceMatrixService();
+
+        function getDistances() {
+            const origin = document.getElementById("origin").value;
+            if (!origin) {
+                alert("Please enter a starting address.");
+                return;
+            }
+
+            document.getElementById("loading").style.display = "block";
+
+            const destinations = [
+                "Atrium Health Carolinas Medical Center, Charlotte NC",
+                "Piedmont Medical Center, Rock Hill SC",
+                "Caromont Regional Medical Center, Gastonia NC",
+                "Atrium Health Pineville, Charlotte NC",
+                "Fort Mill Medical Center, Fort Mill SC",
+                "Atrium Health Kings Mountain, Kings Mountain NC",
+                "MUSC Chester, Chester SC"
+            ];
+
+            service.getDistanceMatrix(
+                {
+                    origins: [origin],
+                    destinations: destinations,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    unitSystem: google.maps.UnitSystem.IMPERIAL,
+                },
+                callback
+            );
+        }
+
+        function callback(response, status) {
+            document.getElementById("loading").style.display = "none";
+
+            if (status === "OK" && response.rows.length > 0 && response.rows[0].elements.length === 7) {
+                const results = response.rows[0].elements;
+
+                function setResult(idDist, idDur, result) {
+                    if (result.status === "OK") {
+                        document.getElementById(idDist).textContent = `Distance: ${result.distance.text}`;
+                        document.getElementById(idDur).textContent = `Drive Time: ${result.duration.text}`;
+                    } else {
+                        document.getElementById(idDist).textContent = "Distance: N/A";
+                        document.getElementById(idDur).textContent = "Drive Time: N/A";
+                    }
+                }
+
+                setResult("atrium-charlotte-distance", "atrium-charlotte-duration", results[0]);
+                setResult("piedmont-rockhill-distance", "piedmont-rockhill-duration", results[1]);
+                setResult("caromont-gastonia-distance", "caromont-gastonia-duration", results[2]);
+                setResult("atrium-pineville-distance", "atrium-pineville-duration", results[3]);
+                setResult("fortmill-distance", "fortmill-duration", results[4]);
+                setResult("atrium-kingsmountain-distance", "atrium-kingsmountain-duration", results[5]);
+                setResult("musc-chester-distance", "musc-chester-duration", results[6]);
+            } else {
+                alert(`Error fetching distances: ${status}`);
+            }
+        }
+    </script>
+</body>
+</html>
