@@ -7,7 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial;
             margin: 20px;
         }
         label {
@@ -19,12 +19,13 @@
             padding: 8px;
             margin-bottom: 15px;
             box-sizing: border-box;
-            border-radius: 15px;
+            border-radius: 25px;
         }
         .hospital-info {
             border: 1px solid #ccc;
             padding: 15px;
             margin-bottom: 10px;
+            border-radius: 25px;
         }
         .hospital-info strong {
             display: block;
@@ -43,6 +44,15 @@
             margin-top: 10px;
             font-style: italic;
         }
+        button {
+            border-radius: 25px;
+            padding: 10px 20px; /* Optional: makes the button look nicer */
+            /*border: 10px;*/        /* Optional: removes the default border */
+            margin-bottom: 20px;
+            background-color: #1976d2; /* Optional: gives a nice color */
+            color: white;             /* Optional: makes text white */
+            cursor: pointer;          /* Optional: shows pointer on hover */
+    }
     </style>
     <!-- Google Maps API script should be loaded before your custom script -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvIrax2oRI_z3QlbzSxDENxVSIe64sgZo&libraries=places"></script>
@@ -113,13 +123,13 @@
             document.getElementById("loading").style.display = "block";
 
             const destinations = [
-                "Atrium Health Carolinas Medical Center, Charlotte NC",
-                "Piedmont Medical Center, Rock Hill SC",
-                "Caromont Regional Medical Center, Gastonia NC",
-                "Atrium Health Pineville, Charlotte NC",
-                "Fort Mill Medical Center, Fort Mill SC",
-                "Atrium Health Kings Mountain, Kings Mountain NC",
-                "MUSC Chester, Chester SC"
+                "1000 Blythe Blvd, Charlotte NC 28203", // Atrium Health Carolinas Medical Center
+                "222 S Herlong Ave, Rock Hill SC 29732", // Piedmont Medical Center
+                "1000 Court Dr, Gastonia NC 28054", // Caromont Regional Medical Center
+                "10820 Park Rd, Pineville NC 28134", // Atrium Health Pineville
+                "1000 Wellness Way, Fort Mill SC 29708", // Fort Mill Medical Center
+                "706 W King St, Kings Mountain NC 28086", // Atrium Health Kings Mountain
+                "1 Medical Park Dr, Chester SC 29706" // MUSC Chester
             ];
 
             service.getDistanceMatrix(
